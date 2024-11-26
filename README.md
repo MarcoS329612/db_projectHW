@@ -43,7 +43,7 @@ Antes de comenzar, asegúrate de tener lo siguiente instalado:
 1. Clona este repositorio:
 
    ```bash
-   git clone https://github.com/TU_USUARIO/DB_PROJECTHW.git
+   git clone https://github.com/MarcoS329612/db_projectHW.git
    cd DB_PROJECTHW
 
 2. Crea un entorno virtual:
