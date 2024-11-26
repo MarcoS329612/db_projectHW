@@ -1,4 +1,3 @@
-# gui/ticket_confirmation.py
 import tkinter as tk
 from tkinter import messagebox
 from app.database.queries import comprar_boleto
@@ -11,11 +10,19 @@ class TicketConfirmation(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
+        # Título de confirmación
         self.label_confirmacion = tk.Label(self, text="", font=("Helvetica", 16))
-        self.label_confirmacion.pack(pady=20)
+        self.label_confirmacion.grid(row=0, column=0, columnspan=2, pady=20, padx=10, sticky="w")
 
-        tk.Button(self, text="Confirmar Compra", command=self.confirmar_compra).pack(pady=10)
-        tk.Button(self, text="Cancelar", command=self.controller.mostrar_seleccion_pelicula).pack()
+        # Botón de Confirmar Compra
+        tk.Button(self, text="Confirmar Compra", command=self.confirmar_compra).grid(row=1, column=0, pady=10, padx=10, sticky="ew")
+
+        # Botón de Cancelar
+        tk.Button(self, text="Cancelar", command=self.controller.mostrar_seleccion_pelicula).grid(row=1, column=1, pady=10, padx=10, sticky="ew")
+
+        # Aseguramos que las columnas se expandan
+        self.grid_columnconfigure(0, weight=1, uniform="equal")
+        self.grid_columnconfigure(1, weight=1, uniform="equal")
 
     def set_boleto(self, horario):
         self.horario = horario

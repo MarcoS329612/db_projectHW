@@ -4,7 +4,7 @@ def get_connection():
     try:
         connection = pyodbc.connect(
             'DRIVER={ODBC Driver 18 for SQL Server};'
-            'SERVER=MARCO;'
+            'SERVER=DELL-LATITUDE-M;'
             'DATABASE=CineDB;'
             'TrustServerCertificate=yes;'
             'Trusted_Connection=yes;'
