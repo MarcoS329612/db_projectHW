@@ -23,11 +23,9 @@ class ScheduleSelection(tk.Frame):
         self.refresh()
 
     def refresh(self):
-        # Limpiar los widgets existentes
         for widget in self.frame_horarios.winfo_children():
             widget.destroy()
 
-        # Obtener los horarios de la película seleccionada
         self.horarios = obtener_horarios_por_pelicula(self.pelicula['id_pelicula'])
         if self.horarios:
             for horario in self.horarios:

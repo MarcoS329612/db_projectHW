@@ -41,7 +41,7 @@ class Login(tk.Frame):
         register_button = ttk.Button(self, text="Registrarse", command=self.controller.mostrar_registro)
         register_button.grid(row=6, column=0, padx=20, pady=10, sticky="ew")
 
-        # Hacer que el campo de contraseña tenga un tamaño mínimo (opcional)
+        # Hacer que el campo de contraseña tenga un tamaño mínimo 
         pass_entry.bind("<Configure>", lambda e: self.set_minimum_size(pass_entry))
 
     def login(self):

@@ -14,10 +14,8 @@ class TicketConfirmation(tk.Frame):
         self.label_confirmacion = tk.Label(self, text="", font=("Helvetica", 16))
         self.label_confirmacion.grid(row=0, column=0, columnspan=2, pady=20, padx=10, sticky="w")
 
-        # Botón de Confirmar Compra
         tk.Button(self, text="Confirmar Compra", command=self.confirmar_compra).grid(row=1, column=0, pady=10, padx=10, sticky="ew")
 
-        # Botón de Cancelar
         tk.Button(self, text="Cancelar", command=self.controller.mostrar_seleccion_pelicula).grid(row=1, column=1, pady=10, padx=10, sticky="ew")
 
         # Aseguramos que las columnas se expandan

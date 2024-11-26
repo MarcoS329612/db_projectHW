@@ -57,3 +57,5 @@ class Register(tk.Frame):
             self.controller.mostrar_login()
         else:
             messagebox.showerror("Error", "Hubo un problema al registrar el usuario.")
+
+
