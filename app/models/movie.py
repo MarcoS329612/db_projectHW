@@ -1,49 +1,18 @@
-# main.py
-import tkinter as tk
-from app.gui.login import Login
-from app.gui.register import Register
-from app.gui.movie_selection import MovieSelection
-from app.gui.schedule_selection import ScheduleSelection
-from app.gui.ticket_confirmation import TicketConfirmation
+# app/models/movie.py
 
-class CineApp(tk.Tk):
-    def __init__(self):
-        super().__init__()
-        self.title("CineApp")
-        self.geometry("800x600")
-        self.resizable(False, False)
-        self.usuario_actual = None
-        self.mostrar_login()
+class Movie:
+    def __init__(self, pelicula_id, titulo, clasificacion, duracion, genero, sinopsis=None, fecha_estreno=None):
+        self.pelicula_id = pelicula_id
+        self.titulo = titulo
+        self.clasificacion = clasificacion
+        self.duracion = duracion
+        self.genero = genero
+        self.sinopsis = sinopsis
+        self.fecha_estreno = fecha_estreno
 
-    def mostrar_login(self):
-        self.limpiar_ventana()
-        login = Login(self, self)
-        login.pack()
-
-    def mostrar_registro(self):
-        self.limpiar_ventana()
-        registro = Register(self, self)
-        registro.pack()
-
-    def mostrar_seleccion_pelicula(self):
-        self.limpiar_ventana()
-        seleccion = MovieSelection(self, self)
-        seleccion.pack()
-
-    def mostrar_seleccion_horario(self, pelicula):
-        self.limpiar_ventana()
-        horario = ScheduleSelection(self, self, pelicula)
-        horario.pack()
-
-    def mostrar_confirmacion(self, boleto):
-        self.limpiar_ventana()
-        confirmacion = TicketConfirmation(self, self, boleto)
-        confirmacion.pack()
-
-    def limpiar_ventana(self):
-        for widget in self.winfo_children():
-            widget.destroy()
-
-if __name__ == "__main__":
-    app = CineApp()
-    app.mainloop()
+    @classmethod
+    def from_db_row(cls, row):
+        return cls(
+            row.PeliculaID, row.Titulo, row.Clasificacion, row.Duracion, row.Genero,
+            sinopsis=row.Sinopsis, fecha_estreno=row.FechaEstreno
+        )

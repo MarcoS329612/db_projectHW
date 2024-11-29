@@ -1,61 +1,56 @@
+# app/gui/register.py
+
 import tkinter as tk
 from tkinter import messagebox
-from app.database.queries import registrar_usuario
-import re
+from app.database import queries
 
-class Register(tk.Frame):
-    def __init__(self, parent, controller):
-        super().__init__(parent)
-        self.controller = controller
-        self.nombre_var = tk.StringVar()
-        self.email_var = tk.StringVar()
-        self.contraseña_var = tk.StringVar()
-        self.create_widgets()
+class RegisterWindow:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Registro")
+        self.root.geometry('800x600')
 
-    def create_widgets(self):
-        # Título
-        tk.Label(self, text="Registro de Usuario", font=("Helvetica", 16)).grid(row=0, column=0, columnspan=2, pady=20)
+        self.frame = tk.Frame(self.root)
+        self.frame.pack(padx=20, pady=20)
 
-        # Campo Nombre
-        tk.Label(self, text="Nombre:").grid(row=1, column=0, sticky="e", padx=10)
-        tk.Entry(self, textvariable=self.nombre_var).grid(row=1, column=1, padx=10, pady=5, sticky="ew")
+        tk.Label(self.frame, text="Nombre:").grid(row=0, column=0, sticky='e')
+        tk.Label(self.frame, text="Correo:").grid(row=1, column=0, sticky='e')
+        tk.Label(self.frame, text="Contraseña:").grid(row=2, column=0, sticky='e')
 
-        # Campo Email
-        tk.Label(self, text="Email:").grid(row=2, column=0, sticky="e", padx=10)
-        tk.Entry(self, textvariable=self.email_var).grid(row=2, column=1, padx=10, pady=5, sticky="ew")
+        self.name_entry = tk.Entry(self.frame)
+        self.email_entry = tk.Entry(self.frame)
+        self.password_entry = tk.Entry(self.frame, show="*")
 
-        # Campo Contraseña
-        tk.Label(self, text="Contraseña:").grid(row=3, column=0, sticky="e", padx=10)
-        tk.Entry(self, textvariable=self.contraseña_var, show="*").grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+        self.name_entry.grid(row=0, column=1)
+        self.email_entry.grid(row=1, column=1)
+        self.password_entry.grid(row=2, column=1)
 
-        # Botones
-        tk.Button(self, text="Registrarse", command=self.registrar).grid(row=4, column=0, columnspan=2, pady=10, padx=10, sticky="ew")
-        tk.Button(self, text="Volver", command=self.controller.mostrar_login).grid(row=5, column=0, columnspan=2, pady=10, padx=10, sticky="ew")
+        self.register_button = tk.Button(self.frame, text="Registrarse", command=self.register)
+        self.register_button.grid(row=3, column=0, pady=10)
 
-        # Configurar expansión de columnas
-        self.grid_columnconfigure(1, weight=1)
+        self.back_button = tk.Button(self.frame, text="Volver", command=self.go_back)
+        self.back_button.grid(row=3, column=1)
 
-    def registrar(self):
-        nombre = self.nombre_var.get().strip()
-        email = self.email_var.get().strip()
-        contraseña = self.contraseña_var.get().strip()
+# app/gui/register.py
 
-        # Verificar si todos los campos están llenos
-        if not nombre or not email or not contraseña:
-            messagebox.showwarning("Advertencia", "Todos los campos son obligatorios.")
-            return
+    def register(self):
+        nombre = self.name_entry.get()
+        correo = self.email_entry.get()
+        contrasena = self.password_entry.get()
 
-        # Validar formato de email
-        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            messagebox.showwarning("Advertencia", "Por favor ingresa un email válido.")
-            return
+        try:
+            if queries.register_user(nombre, correo, contrasena):
+                messagebox.showinfo("Éxito", "Usuario registrado correctamente")
+                self.go_back()
+            else:
+                messagebox.showerror("Error", "No se pudo registrar el usuario")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred during registration: {e}")
+            print(f"Registration error: {e}")
 
-        # Registrar usuario
-        usuario_registrado = registrar_usuario(nombre, email, contraseña)
-        if usuario_registrado:
-            messagebox.showinfo("Éxito", "Usuario registrado con éxito.")
-            self.controller.mostrar_login()
-        else:
-            messagebox.showerror("Error", "Hubo un problema al registrar el usuario.")
-
-
+    def go_back(self):
+        self.root.destroy()
+        from app.gui.login import LoginWindow  # Moved import here
+        root = tk.Tk()
+        app = LoginWindow(root)
+        root.mainloop()

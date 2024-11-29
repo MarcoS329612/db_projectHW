@@ -1,43 +1,48 @@
+# gui/movie_selection.py
+
 import tkinter as tk
-from app.database.queries import obtener_peliculas
+from app.database import queries
+from app.models.movie import Movie
+from app.gui.schedule_selection import ScheduleSelectionWindow
+from app.gui.movie_management import MovieManagementWindow
 
-class MovieSelection(tk.Frame):
-    def __init__(self, parent, controller):
-        super().__init__(parent)
-        self.controller = controller
-        self.peliculas = []
-        self.create_widgets()
+class MovieSelectionWindow:
+    def __init__(self, root, user):
+        self.root = root
+        self.user = user
+        self.root.title("Selección de Película")
+        self.root.geometry('800x600')
 
-    def create_widgets(self):
-        tk.Label(self, text="Seleccione una Película", font=("Helvetica", 16)).pack(pady=20)
-        
-        self.frame_peliculas = tk.Frame(self)
-        self.frame_peliculas.pack(fill="both", expand=True, padx=20, pady=10)
+        self.movies = [Movie.from_db_row(row) for row in queries.get_movies()]
 
-        self.frame_peliculas.columnconfigure(0, weight=1, uniform="equal")  
+        self.frame = tk.Frame(self.root)
+        self.frame.pack(padx=20, pady=20)
 
-        self.refresh()
+        self.movie_listbox = tk.Listbox(self.frame, width=50, height=15)
+        for movie in self.movies:
+            self.movie_listbox.insert(tk.END, f"{movie.titulo} - {movie.genero}")
+        self.movie_listbox.pack(side=tk.LEFT)
 
-    def refresh(self):
-        for widget in self.frame_peliculas.winfo_children():
-            widget.destroy()
+        self.select_button = tk.Button(self.frame, text="Seleccionar", command=self.select_movie)
+        self.select_button.pack(pady=10)
 
-        self.peliculas = obtener_peliculas()
+        # Remove admin check to allow all users to manage movies
+        self.manage_button = tk.Button(self.frame, text="Administrar Películas", command=self.manage_movies)
+        self.manage_button.pack(pady=5)
 
-        if self.peliculas:
-            for index, pelicula in enumerate(self.peliculas):
-                row = index // 2  # Dos botones por fila
-                col = index % 2   # Alternar entre las dos columnas
 
-                tk.Button(
-                    self.frame_peliculas,
-                    text=pelicula['titulo'], 
-                    command=lambda p=pelicula: self.seleccionar_pelicula(p),
-                    width=20, height=2 
-                ).grid(row=row, column=col, padx=10, pady=10, sticky="ew")
+    def manage_movies(self):
+        self.root.destroy()
+        root = tk.Tk()
+        app = MovieManagementWindow(root, self.user)
+        root.mainloop()
 
-        else:
-            tk.Label(self.frame_peliculas, text="No hay películas disponibles.").pack()
+    def select_movie(self):
+        selected_index = self.movie_listbox.curselection()
+        if selected_index:
+            selected_movie = self.movies[selected_index[0]]
+            self.root.destroy()
+            root = tk.Tk()
+            app = ScheduleSelectionWindow(root, self.user, selected_movie)
+            root.mainloop()
 
-    def seleccionar_pelicula(self, pelicula):
-        self.controller.mostrar_seleccion_horario(pelicula)
